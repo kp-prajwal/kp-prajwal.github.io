@@ -10311,3 +10311,106 @@ form .row:first-child .floating-label-form-group {
 .btn-social {
     margin-bottom: .5rem;
 }
+
+#lead-down {
+    left: 0;
+    right: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    bottom: 15px;
+    color: rgb(255, 255, 255)
+}
+
+#skills {
+    padding: 10px 5px;
+    text-align: center
+}
+
+#skills h2 {
+    color: #ffffff;
+    margin-bottom: 10px
+}
+
+#skills ul {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 800px
+}
+
+#skills li {
+    display: inline-block;
+    margin: 7px;
+    padding: 5px 10px;
+    color: #f6f8fa;
+    background: #2c3e50;
+    list-style: none;
+    font-size: 1.;
+    border-radius: 0.3cm;
+}
+
+
+/* Tools*/
+
+#tools {
+    padding: 10px 15px;
+    text-align: center
+}
+
+#tools h2 {
+    color: #ffffff;
+    margin-bottom: 50px
+}
+
+#tools ul {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 800px
+}
+
+#tools li {
+    display: inline-block;
+    margin: 7px;
+    padding: 5px 10px;
+    color: #f6f8fa;
+    background: #2c3e50;
+    list-style: none;
+    font-size: 1.2em;
+    border-radius: 0.3cm;
+}
+
+
+/*Libraries*/
+
+#libraries {
+    padding: 10px 15px;
+    text-align: center
+}
+
+#libraries h2 {
+    color: #ffffff;
+    margin-bottom: 50px
+}
+
+#libraries ul {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 800px
+}
+
+#libraries li {
+    display: inline-block;
+    margin: 7px;
+    padding: 5px 10px;
+    color: #f6f8fa;
+    background: #2c3e50;
+    list-style: none;
+    font-size: 1.2em;
+    border-radius: 0.3cm;
+}
+
+
+/*Experience*/
