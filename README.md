@@ -6,4 +6,4 @@ Personal Portfolio
 2. Add medium link
 3. Add projects
 4. Add certifications
-5. Add Skills
+5. Add Skills - Done
