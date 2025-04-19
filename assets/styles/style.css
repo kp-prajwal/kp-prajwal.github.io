@@ -807,7 +807,7 @@ button:focus {
   margin-top: -4.125rem;
   height: 10.125rem;
   overflow: hidden;
-  width: 10.125rem;
+  width: 12.125rem;
 }
 @media only screen and (max-width: 991px) {
   .header__photo {
