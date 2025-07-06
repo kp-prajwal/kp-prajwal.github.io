@@ -805,9 +805,9 @@ button:focus {
   border-radius: 1.9375rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
   margin-top: -4.125rem;
-  height: 10.125rem;
+  height: 12.125rem;
   overflow: hidden;
-  width: 12.125rem;
+  width: 15.125rem;
 }
 @media only screen and (max-width: 991px) {
   .header__photo {
