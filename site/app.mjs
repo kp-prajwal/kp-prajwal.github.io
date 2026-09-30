@@ -8,13 +8,42 @@ let audioNodes = [];
 let soundOn = false;
 let preference;
 const toast = document.querySelector('[data-easter-toast]');
+const discoveriesToggle = document.querySelector('[data-discoveries-toggle]');
+const discoveriesCard = document.querySelector('[data-discoveries-card]');
 let visualMode = 'default';
 let visualTimer;
 let toastTimer;
 let locationIndex = 0;
 let typedSequence = '';
 let trail = [];
+let discovered = new Set();
 try { preference = localStorage.getItem('prajwal-portfolio-sound'); } catch { preference = null; }
+try { discovered = new Set(JSON.parse(sessionStorage.getItem('prajwal-discoveries') || '[]')); } catch { discovered = new Set(); }
+
+function updateDiscoveries() {
+  document.querySelector('[data-discoveries-count]').textContent = `${discovered.size} / 3`;
+  document.querySelectorAll('[data-discovery-clue]').forEach(clue => {
+    clue.classList.toggle('is-found', discovered.has(clue.dataset.discoveryClue));
+  });
+}
+
+function markDiscovery(name) {
+  if (discovered.has(name)) return;
+  discovered.add(name);
+  try { sessionStorage.setItem('prajwal-discoveries', JSON.stringify([...discovered])); } catch { /* Session progress is optional. */ }
+  updateDiscoveries();
+}
+
+function toggleDiscoveries() {
+  const opening = discoveriesCard.hidden;
+  discoveriesCard.hidden = !opening;
+  discoveriesToggle.setAttribute('aria-expanded', String(opening));
+}
+
+discoveriesToggle.addEventListener('click', event => {
+  event.stopPropagation();
+  toggleDiscoveries();
+});
 
 function showToast(message, duration = 2400) {
   if (!toast) return;
@@ -148,11 +177,13 @@ function navigate(pathname, push = true) {
 document.addEventListener('click', async event => {
   const footballButton = event.target.closest('[data-football]');
   if (footballButton) {
+    markDiscovery('football');
     activateVisual('football', 'GGMU · Manchester is red.');
     return;
   }
   const locationButton = event.target.closest('[data-location]');
   if (locationButton) {
+    markDiscovery('location');
     switchLocation(locationButton);
     return;
   }
@@ -186,6 +217,7 @@ document.addEventListener('keydown', event => {
     typedSequence = (typedSequence + event.key.toLowerCase()).slice(-16);
     if (typedSequence.endsWith('ride')) {
       typedSequence = '';
+      markDiscovery('ride');
       activateVisual('ride', 'Ride mode · keep moving.');
     }
   }
@@ -200,6 +232,7 @@ document.addEventListener('keydown', event => {
 window.addEventListener('popstate', () => navigate(location.pathname, false));
 window.addEventListener('resize', () => positionRail(false));
 soundState();
+updateDiscoveries();
 requestAnimationFrame(() => positionRail(false));
 
 // A responsive data field: individual cells breathe and respond to the pointer.
