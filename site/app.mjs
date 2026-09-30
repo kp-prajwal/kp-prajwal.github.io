@@ -1,4 +1,4 @@
-import { identity } from './content.mjs';
+import { identity, work, projects } from './content.mjs';
 import { renderPanels, routeFor } from './render.mjs';
 
 const viewport = document.querySelector('#viewport');
@@ -7,7 +7,40 @@ let audioContext;
 let audioNodes = [];
 let soundOn = false;
 let preference;
+const previewItems = new Map([
+  ...work.map((item, index) => [`work:${item.slug}`, { ...item, kind: 'SELECTED WORK', index, total: work.length }]),
+  ...projects.map((item, index) => [`project:${item.slug}`, { ...item, kind: 'PROJECT', index, total: projects.length }]),
+]);
+const story = document.querySelector('[data-canvas-story]');
+let fieldContext = story?.dataset.activePreview || 'work:albertsons';
+let storyChangeTimer;
 try { preference = localStorage.getItem('prajwal-portfolio-sound'); } catch { preference = null; }
+
+function routePreviewKey() {
+  const route = routeFor(location.pathname);
+  if (route.type === 'work') return `work:${route.item.slug}`;
+  if (route.type === 'project') return `project:${route.item.slug}`;
+  return route.type === 'projects' ? 'project:cometverse' : 'work:albertsons';
+}
+
+function setPreview(key, animate = true) {
+  const item = previewItems.get(key);
+  if (!story || !item || story.dataset.activePreview === key) return;
+  clearTimeout(storyChangeTimer);
+  if (animate) story.classList.add('is-changing');
+  const update = () => {
+    story.querySelector('[data-story-kind]').textContent = item.kind;
+    story.querySelector('[data-story-index]').textContent = `${String(item.index + 1).padStart(2, '0')} / ${String(item.total).padStart(2, '0')}`;
+    story.querySelector('[data-story-title]').textContent = item.title;
+    story.querySelector('[data-story-metric]').textContent = item.metric || item.category;
+    story.querySelector('[data-story-label]').textContent = item.metricLabel || item.teaser;
+    story.querySelector('[data-story-tags]').textContent = item.tags.slice(0, 4).join(' · ');
+    story.dataset.activePreview = key;
+    fieldContext = key;
+    story.classList.remove('is-changing');
+  };
+  storyChangeTimer = setTimeout(update, animate ? 120 : 0);
+}
 
 function soundState() {
   const button = document.querySelector('[data-sound]');
@@ -101,6 +134,7 @@ function navigate(pathname, push = true) {
   positionRail();
   rail.querySelector('.panel:last-child')?.scrollTo(0, 0);
   if (push) rail.querySelector('.panel:last-child')?.focus({ preventScroll: true });
+  setPreview(routePreviewKey());
 }
 
 document.addEventListener('click', async event => {
@@ -129,6 +163,23 @@ document.addEventListener('pointerdown', event => {
   startSound(false);
 }, { passive: true });
 
+document.addEventListener('pointerover', event => {
+  const link = event.target.closest('[data-preview]');
+  if (link) setPreview(link.dataset.preview);
+});
+document.addEventListener('pointerout', event => {
+  const link = event.target.closest('[data-preview]');
+  if (link && !link.contains(event.relatedTarget)) setPreview(routePreviewKey());
+});
+document.addEventListener('focusin', event => {
+  const link = event.target.closest('[data-preview]');
+  if (link) setPreview(link.dataset.preview);
+});
+document.addEventListener('focusout', event => {
+  const link = event.target.closest('[data-preview]');
+  if (link && !link.contains(event.relatedTarget)) setPreview(routePreviewKey());
+});
+
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && location.pathname !== '/') {
     const route = routeFor(location.pathname);
@@ -148,6 +199,17 @@ const canvas = document.querySelector('#field');
 const context = canvas.getContext('2d', { alpha: false });
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let canvasWidth = 0, canvasHeight = 0, pointer = { x: -1000, y: -1000 }, lastFrame = 0;
+const fieldThemes = {
+  'work:albertsons': { hue: 196, glow: -34, warm: -132, x: .75, y: .42 },
+  'work:generativeproduct': { hue: 211, glow: 55, warm: -48, x: .79, y: .34 },
+  'work:abb': { hue: 188, glow: -14, warm: -148, x: .72, y: .56 },
+  'project:cometverse': { hue: 205, glow: -35, warm: 72, x: .76, y: .36 },
+  'project:pm-interview-assistant': { hue: 218, glow: 48, warm: -62, x: .70, y: .44 },
+  'project:streaming-pipeline': { hue: 190, glow: -58, warm: -105, x: .80, y: .47 },
+  'project:amazon-etl': { hue: 202, glow: -25, warm: 92, x: .73, y: .52 },
+  'project:demand-prediction': { hue: 181, glow: -34, warm: -118, x: .77, y: .39 },
+  'project:nfl-injuries': { hue: 205, glow: -10, warm: -162, x: .68, y: .48 },
+};
 function sizeCanvas() {
   const ratio = Math.min(devicePixelRatio || 1, 2);
   canvasWidth = innerWidth; canvasHeight = innerHeight;
@@ -158,11 +220,12 @@ function sizeCanvas() {
 }
 function drawField(now) {
   const step = innerWidth < 600 ? 22 : 25;
+  const theme = fieldThemes[fieldContext] || fieldThemes['work:albertsons'];
   context.fillStyle = '#07111e';
   context.fillRect(0, 0, canvasWidth, canvasHeight);
   const motion = reducedMotion.matches ? 0 : now * 0.00019;
-  const orbX = canvasWidth * (.74 + Math.sin(motion) * .10);
-  const orbY = canvasHeight * (.40 + Math.cos(motion * .8) * .15);
+  const orbX = canvasWidth * (theme.x + Math.sin(motion) * .10);
+  const orbY = canvasHeight * (theme.y + Math.cos(motion * .8) * .15);
   for (let y = 0; y < canvasHeight; y += step) {
     for (let x = 0; x < canvasWidth; x += step) {
       const dx = x - orbX, dy = y - orbY;
@@ -173,7 +236,7 @@ function drawField(now) {
       const touch = Math.exp(-(pdx * pdx + pdy * pdy) / 11500);
       const ripple = .5 + .5 * Math.sin(x * .025 + y * .018 + motion * 5);
       const light = 9 + glow * 28 + warm * 15 + touch * 22 + ripple * 3;
-      const hue = 196 - glow * 30 - warm * 135 + touch * 20;
+      const hue = theme.hue + glow * theme.glow + warm * theme.warm + touch * 20;
       const sat = 34 + glow * 37 + warm * 25;
       context.fillStyle = `hsl(${hue} ${sat}% ${light}%)`;
       context.fillRect(x + 1, y + 1, step - 2, step - 2);

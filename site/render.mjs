@@ -18,7 +18,25 @@ export function routeFor(pathname) {
 
 function listLink(item, type, index) {
   const href = type === 'work' ? `/work/${item.slug}/` : `/projects/${item.slug}/`;
-  return `<a class="index-link" data-route href="${href}"><span class="index-number">${String(index + 1).padStart(2, '0')}</span><span class="index-copy"><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.teaser)}</small></span><span class="index-arrow" aria-hidden="true">↗</span></a>`;
+  return `<a class="index-link" data-route data-preview="${type}:${escapeHTML(item.slug)}" href="${href}"><span class="index-number">${String(index + 1).padStart(2, '0')}</span><span class="index-copy"><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.teaser)}</small></span><span class="index-arrow" aria-hidden="true">↗</span></a>`;
+}
+
+function canvasStory(pathname) {
+  const route = routeFor(pathname);
+  const isProject = route.type === 'project' || route.type === 'projects';
+  const item = route.type === 'project' ? route.item : (isProject ? projects[0] : (route.type === 'work' ? route.item : work[0]));
+  const collection = isProject ? projects : work;
+  const index = Math.max(0, collection.findIndex(entry => entry.slug === item.slug));
+  const kind = isProject ? 'project' : 'work';
+  const metric = item.metric || item.category;
+  const metricLabel = item.metricLabel || item.teaser;
+  return `<aside class="canvas-story" data-canvas-story data-active-preview="${kind}:${escapeHTML(item.slug)}" aria-hidden="true">
+    <div class="canvas-story-line"></div>
+    <div class="canvas-story-head"><span data-story-kind>${isProject ? 'PROJECT' : 'SELECTED WORK'}</span><span data-story-index>${String(index + 1).padStart(2, '0')} / ${String(collection.length).padStart(2, '0')}</span></div>
+    <h2 data-story-title>${escapeHTML(item.title)}</h2>
+    <div class="canvas-story-metric"><strong data-story-metric>${escapeHTML(metric)}</strong><span data-story-label>${escapeHTML(metricLabel)}</span></div>
+    <p data-story-tags>${item.tags.slice(0, 4).map(escapeHTML).join(' · ')}</p>
+  </aside>`;
 }
 
 function home() {
@@ -71,5 +89,5 @@ export function renderPanels(pathname) {
 }
 
 export function render(pathname) {
-  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div><main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
+  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div>${canvasStory(pathname)}<main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
 }
