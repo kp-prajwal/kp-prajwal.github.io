@@ -71,5 +71,5 @@ export function renderPanels(pathname) {
 }
 
 export function render(pathname) {
-  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div><div class="site-chrome" aria-hidden="true"><span>PK / DATA & AI</span><span>SCROLL TO EXPLORE · CLICK TO OPEN</span></div><main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
+  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div><main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
 }
