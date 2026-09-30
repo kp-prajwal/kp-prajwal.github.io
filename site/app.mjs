@@ -12,7 +12,7 @@ const previewItems = new Map([
   ...projects.map((item, index) => [`project:${item.slug}`, { ...item, kind: 'PROJECT', index, total: projects.length }]),
 ]);
 const story = document.querySelector('[data-canvas-story]');
-let fieldContext = story?.dataset.activePreview || 'work:albertsons';
+let fieldContext = location.pathname === '/' ? (story?.dataset.activePreview || 'work:albertsons') : 'neutral';
 let storyChangeTimer;
 try { preference = localStorage.getItem('prajwal-portfolio-sound'); } catch { preference = null; }
 
@@ -25,7 +25,8 @@ function routePreviewKey() {
 
 function setPreview(key, animate = true) {
   const item = previewItems.get(key);
-  if (!story || !item || story.dataset.activePreview === key) return;
+  if (!story || !item) return;
+  if (story.dataset.activePreview === key) { fieldContext = key; return; }
   clearTimeout(storyChangeTimer);
   if (animate) story.classList.add('is-changing');
   const update = () => {
@@ -40,6 +41,19 @@ function setPreview(key, animate = true) {
     story.classList.remove('is-changing');
   };
   storyChangeTimer = setTimeout(update, animate ? 120 : 0);
+}
+
+function syncStory(route, animate = true) {
+  if (!story) return;
+  const show = route.type === 'home';
+  story.hidden = !show;
+  if (!show) {
+    clearTimeout(storyChangeTimer);
+    story.classList.remove('is-changing');
+    fieldContext = 'neutral';
+    return;
+  }
+  setPreview('work:albertsons', animate);
 }
 
 function soundState() {
@@ -134,7 +148,7 @@ function navigate(pathname, push = true) {
   positionRail();
   rail.querySelector('.panel:last-child')?.scrollTo(0, 0);
   if (push) rail.querySelector('.panel:last-child')?.focus({ preventScroll: true });
-  setPreview(routePreviewKey());
+  syncStory(route);
 }
 
 document.addEventListener('click', async event => {
@@ -164,18 +178,22 @@ document.addEventListener('pointerdown', event => {
 }, { passive: true });
 
 document.addEventListener('pointerover', event => {
+  if (story?.hidden) return;
   const link = event.target.closest('[data-preview]');
   if (link) setPreview(link.dataset.preview);
 });
 document.addEventListener('pointerout', event => {
+  if (story?.hidden) return;
   const link = event.target.closest('[data-preview]');
   if (link && !link.contains(event.relatedTarget)) setPreview(routePreviewKey());
 });
 document.addEventListener('focusin', event => {
+  if (story?.hidden) return;
   const link = event.target.closest('[data-preview]');
   if (link) setPreview(link.dataset.preview);
 });
 document.addEventListener('focusout', event => {
+  if (story?.hidden) return;
   const link = event.target.closest('[data-preview]');
   if (link && !link.contains(event.relatedTarget)) setPreview(routePreviewKey());
 });
@@ -200,6 +218,7 @@ const context = canvas.getContext('2d', { alpha: false });
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let canvasWidth = 0, canvasHeight = 0, pointer = { x: -1000, y: -1000 }, lastFrame = 0;
 const fieldThemes = {
+  neutral: { hue: 196, glow: -30, warm: -135, x: .74, y: .40 },
   'work:albertsons': { hue: 196, glow: -34, warm: -132, x: .75, y: .42 },
   'work:generativeproduct': { hue: 211, glow: 55, warm: -48, x: .79, y: .34 },
   'work:abb': { hue: 188, glow: -14, warm: -148, x: .72, y: .56 },
