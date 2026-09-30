@@ -30,7 +30,7 @@ function canvasStory(pathname) {
   const kind = isProject ? 'project' : 'work';
   const metric = item.metric || item.category;
   const metricLabel = item.metricLabel || item.teaser;
-  return `<aside class="canvas-story" data-canvas-story data-active-preview="${kind}:${escapeHTML(item.slug)}" aria-hidden="true"${route.type === 'home' ? '' : ' hidden'}>
+  return `<aside class="canvas-story" data-canvas-story data-active-preview="${kind}:${escapeHTML(item.slug)}" aria-hidden="true">
     <div class="canvas-story-line"></div>
     <div class="canvas-story-head"><span data-story-kind>${isProject ? 'PROJECT' : 'SELECTED WORK'}</span><span data-story-index>${String(index + 1).padStart(2, '0')} / ${String(collection.length).padStart(2, '0')}</span></div>
     <h2 data-story-title>${escapeHTML(item.title)}</h2>

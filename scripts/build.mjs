@@ -23,11 +23,11 @@ function documentFor(path) {
   <link rel="icon" href="/site/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/site/style.css?v=20260929d">
+  <link rel="stylesheet" href="/site/style.css?v=20260929c">
   <title>${escapeHTML(title)}</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WBMN3DLLW"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-0WBMN3DLLW')</script>
-  <script type="module" src="/site/app.mjs?v=20260929d"></script>
+  <script type="module" src="/site/app.mjs?v=20260929c"></script>
 </head>
 <body><div id="app">${render(path)}</div></body>
 </html>
