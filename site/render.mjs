@@ -23,12 +23,12 @@ function listLink(item, type, index) {
 
 function home() {
   return `<section class="home-panel panel" aria-labelledby="site-name">
-    <div class="home-top"><div class="monogram" aria-hidden="true">PK<span class="monogram-dot">.</span></div><div class="home-top-right"><span class="edition">PORTFOLIO / 2026</span><button class="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" title="Turn sound on" data-sound><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">SOUND OFF</span></button></div></div>
+    <div class="home-top"><button class="monogram" type="button" aria-label="Reveal a personal detail" title="There is more here" data-easter data-football>PK<span class="monogram-dot">.</span></button><div class="home-top-right"><span class="edition">PORTFOLIO / 2026</span><button class="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" title="Turn sound on" data-sound><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">SOUND OFF</span></button></div></div>
     <div class="home-main">
       <p class="eyebrow"><span class="eyebrow-line"></span> DATA ENGINEERING & APPLIED AI</p>
       <h1 id="site-name">Prajwal<br>Kulkarni<span class="period">.</span></h1>
       <p class="intro">${escapeHTML(identity.intro)}</p>
-      <p class="home-location"><span class="location-pip" aria-hidden="true"></span> Dallas, Texas</p>
+      <button class="home-location" type="button" data-easter data-location aria-label="Switch between Dallas and Bengaluru local time"><span class="location-pip" aria-hidden="true"></span><span data-location-label>Dallas, Texas</span></button>
       <div class="home-index"><div class="section-heading"><span>SELECTED WORK</span><span>01 — 03</span></div><nav aria-label="Selected work">${work.map((item, index) => listLink(item, 'work', index)).join('')}</nav></div>
       <div class="home-explore"><a href="/projects/" data-route class="explore-link">Explore projects <span aria-hidden="true">↗</span></a><a href="/about/" data-route class="explore-link">A little about me <span aria-hidden="true">↗</span></a></div>
     </div>
@@ -71,5 +71,5 @@ export function renderPanels(pathname) {
 }
 
 export function render(pathname) {
-  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div><main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
+  return `<div class="frame"><canvas id="field" aria-hidden="true"></canvas><div class="frame-grain" aria-hidden="true"></div><main class="viewport" id="viewport"><div class="rail" id="rail">${renderPanels(pathname)}</div></main><div class="easter-toast" data-easter-toast role="status" aria-live="polite"></div><span class="edge-mark edge-mark-top" aria-hidden="true">+</span><span class="edge-mark edge-mark-bottom" aria-hidden="true">+</span></div>`;
 }
