@@ -15,10 +15,13 @@ let visualTimer;
 let toastTimer;
 let locationIndex = 0;
 let typedSequence = '';
-let trail = [];
 let discovered = new Set();
 try { preference = localStorage.getItem('prajwal-portfolio-sound'); } catch { preference = null; }
 try { discovered = new Set(JSON.parse(sessionStorage.getItem('prajwal-discoveries') || '[]')); } catch { discovered = new Set(); }
+if (discovered.delete('ride')) {
+  discovered.add('data');
+  try { sessionStorage.setItem('prajwal-discoveries', JSON.stringify([...discovered])); } catch { /* Session progress is optional. */ }
+}
 
 function updateDiscoveries() {
   document.querySelector('[data-discoveries-count]').textContent = `${discovered.size} / 3`;
@@ -55,14 +58,13 @@ function showToast(message, duration = 2400) {
 
 function activateVisual(mode, message, duration = 8500) {
   clearTimeout(visualTimer);
-  trail = [];
   if (visualMode === mode) {
     visualMode = 'default';
     showToast('Back to the data field.');
   } else {
     visualMode = mode;
     showToast(message);
-    visualTimer = setTimeout(() => { visualMode = 'default'; trail = []; }, duration);
+    visualTimer = setTimeout(() => { visualMode = 'default'; }, duration);
   }
   if (typeof drawField === 'function') drawField(performance.now());
 }
@@ -215,10 +217,10 @@ document.addEventListener('pointerdown', event => {
 document.addEventListener('keydown', event => {
   if (!event.metaKey && !event.ctrlKey && !event.altKey && event.key.length === 1 && !event.target.closest('input,textarea,[contenteditable]')) {
     typedSequence = (typedSequence + event.key.toLowerCase()).slice(-16);
-    if (typedSequence.endsWith('ride')) {
+    if (typedSequence.endsWith('data')) {
       typedSequence = '';
-      markDiscovery('ride');
-      activateVisual('ride', 'Ride mode · keep moving.');
+      markDiscovery('data');
+      activateVisual('data', 'DATA IN MOTION · SOURCE → SIGNAL');
     }
   }
   if (event.key === 'Escape' && location.pathname !== '/') {
@@ -272,7 +274,7 @@ function drawField(now) {
     }
   }
   if (visualMode === 'football') drawFootballField();
-  if (visualMode === 'ride') drawRideTrail();
+  if (visualMode === 'data') drawDataPipeline(now);
 }
 function drawFootballField() {
   const left = Math.max(420, canvasWidth * .34), right = canvasWidth - 38;
@@ -295,20 +297,56 @@ function drawFootballField() {
   context.beginPath(); context.arc(left + width / 2, top + height / 2, 2.5, 0, Math.PI * 2); context.fill();
   context.restore();
 }
-function drawRideTrail() {
-  if (trail.length < 2) return;
+function drawDataPipeline(now) {
+  const left = Math.max(430, canvasWidth * .38);
+  const right = canvasWidth - 48;
+  const width = right - left;
+  const centerY = canvasHeight * .5;
+  if (width < 260) return;
+
+  const nodes = [
+    { x: left, y: centerY },
+    { x: left + width * .24, y: centerY },
+    { x: left + width * .47, y: canvasHeight * .30 },
+    { x: left + width * .47, y: canvasHeight * .70 },
+    { x: left + width * .73, y: centerY },
+    { x: right, y: centerY },
+  ];
+  const segments = [[0, 1], [1, 2], [1, 3], [2, 4], [3, 4], [4, 5]];
   context.save();
   context.lineCap = 'round';
-  context.lineJoin = 'round';
-  for (let i = 1; i < trail.length; i++) {
-    const alpha = i / trail.length;
-    context.strokeStyle = `rgba(183,242,213,${alpha * .72})`;
-    context.lineWidth = 1 + alpha * 3;
+  context.strokeStyle = 'rgba(176, 240, 220, .34)';
+  context.lineWidth = 1.25;
+  segments.forEach(([from, to]) => {
     context.beginPath();
-    context.moveTo(trail[i - 1].x, trail[i - 1].y);
-    context.lineTo(trail[i].x, trail[i].y);
+    context.moveTo(nodes[from].x, nodes[from].y);
+    context.lineTo(nodes[to].x, nodes[to].y);
     context.stroke();
-  }
+  });
+
+  nodes.forEach((node, index) => {
+    context.fillStyle = index === 0 || index === nodes.length - 1
+      ? 'rgba(204, 255, 229, .92)'
+      : 'rgba(111, 215, 201, .82)';
+    context.beginPath();
+    context.arc(node.x, node.y, index === 0 || index === nodes.length - 1 ? 5 : 3.5, 0, Math.PI * 2);
+    context.fill();
+  });
+
+  const elapsed = reducedMotion.matches ? 0 : now * .00022;
+  segments.forEach(([from, to], segmentIndex) => {
+    for (let record = 0; record < 3; record++) {
+      const progress = (elapsed + segmentIndex * .19 + record / 3) % 1;
+      const start = nodes[from], end = nodes[to];
+      const x = start.x + (end.x - start.x) * progress;
+      const y = start.y + (end.y - start.y) * progress;
+      const pulse = .68 + Math.sin((progress + elapsed) * Math.PI * 2) * .2;
+      context.fillStyle = `rgba(211, 255, 234, ${pulse})`;
+      context.shadowColor = 'rgba(99, 255, 209, .75)';
+      context.shadowBlur = 8;
+      context.fillRect(x - 3, y - 3, 6, 6);
+    }
+  });
   context.restore();
 }
 function tick(now) {
@@ -317,10 +355,6 @@ function tick(now) {
 }
 window.addEventListener('pointermove', event => {
   pointer = { x: event.clientX, y: event.clientY };
-  if (visualMode === 'ride') {
-    trail.push(pointer);
-    if (trail.length > 34) trail.shift();
-  }
 }, { passive: true });
 window.addEventListener('resize', sizeCanvas);
 reducedMotion.addEventListener('change', () => { drawField(performance.now()); if (!reducedMotion.matches) requestAnimationFrame(tick); });
