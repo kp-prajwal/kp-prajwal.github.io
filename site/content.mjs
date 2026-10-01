@@ -3,10 +3,11 @@ export const identity = {
   intro: 'I build data platforms and useful AI systems.',
   description: 'Data engineer in Dallas, Texas. I turn complex data into systems people can actually use.',
   email: 'prajwalkp.work@gmail.com',
+  resume: 'https://drive.google.com/file/d/1N89xlV2oKfDbqZioWEmdApceewK9ftff/view?usp=sharing',
   links: [
     { label: 'GitHub', href: 'https://github.com/kp-prajwal' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/prajwal-kp/' },
-    { label: 'Résumé', href: '/resume/Prajwal-Kulkarni-Resume.pdf' },
+    { label: 'Résumé', href: 'https://drive.google.com/file/d/1N89xlV2oKfDbqZioWEmdApceewK9ftff/view?usp=sharing' },
   ],
 };
 

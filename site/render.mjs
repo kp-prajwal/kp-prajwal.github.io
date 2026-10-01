@@ -1,4 +1,4 @@
-import { identity, work, projects, about, certifications } from './content.mjs';
+import { identity, work, projects, about, certifications } from './content.mjs?v=20260930-profile1';
 
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const external = (href, label, className = '') => `<a class="${className}" href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(label)}<span aria-hidden="true"> ↗</span></a>`;
@@ -23,14 +23,15 @@ function listLink(item, type, index) {
 
 function home() {
   return `<section class="home-panel panel" aria-labelledby="site-name">
-    <div class="home-top"><button class="monogram" type="button" aria-label="Reveal a personal detail" title="There is more here" data-easter data-football>PK<span class="monogram-dot">.</span></button><div class="home-top-right"><span class="edition">PORTFOLIO / 2026</span><button class="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" title="Turn sound on" data-sound><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">SOUND OFF</span></button></div></div>
+    <div class="home-top"><button class="monogram" type="button" aria-label="Reveal a personal detail" title="There is more here" data-easter data-football>PK<span class="monogram-dot">.</span></button><div class="home-top-right"><span class="edition">PORTFOLIO / 2026</span><button class="sound-toggle" type="button" aria-label="Turn sound off" aria-pressed="true" title="Turn sound off" data-sound><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">SOUND ON</span></button></div></div>
     <div class="home-main">
       <p class="eyebrow"><span class="eyebrow-line"></span> DATA ENGINEERING & APPLIED AI</p>
       <h1 id="site-name">Prajwal<br>Kulkarni<span class="period">.</span></h1>
       <p class="intro">${escapeHTML(identity.intro)}</p>
+      <a href="/about/" data-route class="home-about-card"><img src="/site/assets/prajwal-profile.jpg" alt="" width="76" height="84"><span class="home-about-copy"><small>BEYOND THE WORK</small><strong>A little about me</strong></span><span class="home-about-arrow" aria-hidden="true">↗</span></a>
       <button class="home-location" type="button" data-easter data-location aria-label="Switch between Dallas and Bengaluru local time"><span class="location-pip" aria-hidden="true"></span><span data-location-label>Dallas, Texas</span></button>
       <div class="home-index"><div class="section-heading"><span>SELECTED WORK</span><span>01 — 03</span></div><nav aria-label="Selected work">${work.map((item, index) => listLink(item, 'work', index)).join('')}</nav></div>
-      <div class="home-explore"><a href="/projects/" data-route class="explore-link">Explore projects <span aria-hidden="true">↗</span></a><a href="/about/" data-route class="explore-link">A little about me <span aria-hidden="true">↗</span></a></div>
+      <div class="home-explore"><a href="/projects/" data-route class="explore-link">Explore projects <span aria-hidden="true">↗</span></a></div>
     </div>
     <footer class="home-bottom"><div class="footer-links">${identity.links.map(link => external(link.href, link.label)).join('')}<button class="text-button email-button" type="button" data-email>Copy email <span aria-hidden="true">↗</span></button></div></footer>
   </section>`;
@@ -51,7 +52,7 @@ function projectIndex() {
 }
 
 function aboutPanel() {
-  return panel('About', '/', 'THE PERSON BEHIND THE PIPELINES', `<div class="detail-content"><p class="detail-kicker">Bengaluru → Dallas</p><h2>About me<span class="period">.</span></h2><p class="detail-lead">${escapeHTML(about.summary)}</p><div class="detail-prose">${about.paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</div><div class="mini-heading">EDUCATION</div><div class="education-list"><p>MS, Business Analytics & Artificial Intelligence<br><span>The University of Texas at Dallas</span></p><p>BTech, Electrical & Electronics Engineering<br><span>PES University, Bengaluru</span></p></div><div class="detail-action">${external('/resume/Prajwal-Kulkarni-Resume.pdf', 'Read my résumé')}<a href="/certifications/" data-route>Certifications <span aria-hidden="true">↗</span></a></div></div>`, 'about-panel');
+  return panel('About', '/', 'THE PERSON BEHIND THE PIPELINES', `<div class="detail-content"><p class="detail-kicker">Bengaluru → Dallas</p><h2>About me<span class="period">.</span></h2><figure class="about-photo"><img src="/site/assets/prajwal-profile.jpg" alt="Prajwal Kulkarni sitting at a restaurant" width="835" height="1000"></figure><p class="detail-lead">${escapeHTML(about.summary)}</p><div class="detail-prose">${about.paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</div><div class="mini-heading">EDUCATION</div><div class="education-list"><p>MS, Business Analytics & Artificial Intelligence<br><span>The University of Texas at Dallas</span></p><p>BTech, Electrical & Electronics Engineering<br><span>PES University, Bengaluru</span></p></div><div class="detail-action">${external(identity.resume, 'Read my résumé')}<a href="/certifications/" data-route>Certifications <span aria-hidden="true">↗</span></a></div></div>`, 'about-panel');
 }
 
 function certPanel() {

@@ -1,11 +1,11 @@
-import { identity } from './content.mjs';
-import { renderPanels, routeFor } from './render.mjs';
+import { identity } from './content.mjs?v=20260930-profile1';
+import { renderPanels, routeFor } from './render.mjs?v=20260930-profile1';
 
 const viewport = document.querySelector('#viewport');
 const rail = document.querySelector('#rail');
 let audioContext;
 let audioNodes = [];
-let soundOn = false;
+let soundOn = true;
 let preference;
 const toast = document.querySelector('[data-easter-toast]');
 const discoveriesToggle = document.querySelector('[data-discoveries-toggle]');
@@ -16,7 +16,8 @@ let toastTimer;
 let locationIndex = 0;
 let typedSequence = '';
 let discovered = new Set();
-try { preference = localStorage.getItem('prajwal-portfolio-sound'); } catch { preference = null; }
+try { preference = localStorage.getItem('prajwal-portfolio-sound-v2'); } catch { preference = null; }
+if (preference === 'off') soundOn = false;
 try { discovered = new Set(JSON.parse(sessionStorage.getItem('prajwal-discoveries') || '[]')); } catch { discovered = new Set(); }
 if (discovered.delete('ride')) {
   discovered.add('data');
@@ -92,11 +93,11 @@ function soundState() {
 
 function rememberSound(value) {
   preference = value;
-  try { localStorage.setItem('prajwal-portfolio-sound', value); } catch { /* Optional preference. */ }
+  try { localStorage.setItem('prajwal-portfolio-sound-v2', value); } catch { /* Optional preference. */ }
 }
 
 async function startSound(explicit = false) {
-  if (soundOn || (!explicit && preference === 'off')) return;
+  if ((soundOn && audioNodes.length) || (!explicit && preference === 'off')) return;
   try {
     const Context = window.AudioContext || window.webkitAudioContext;
     if (!Context) return;
@@ -140,7 +141,12 @@ async function startSound(explicit = false) {
 }
 
 function stopSound() {
-  if (!audioContext || !audioNodes.length) return;
+  if (!audioContext || !audioNodes.length) {
+    soundOn = false;
+    rememberSound('off');
+    soundState();
+    return;
+  }
   const master = audioNodes.at(-1);
   master.gain.cancelScheduledValues(audioContext.currentTime);
   master.gain.setTargetAtTime(0, audioContext.currentTime, 0.17);
@@ -210,7 +216,7 @@ document.addEventListener('click', async event => {
 });
 
 document.addEventListener('pointerdown', event => {
-  if (event.target.closest('[data-sound],[data-easter]') || preference === 'off' || soundOn) return;
+  if (event.target.closest('[data-sound],[data-easter]') || preference === 'off' || (soundOn && audioNodes.length)) return;
   startSound(false);
 }, { passive: true });
 
