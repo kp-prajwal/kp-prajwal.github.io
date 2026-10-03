@@ -1,4 +1,4 @@
-import { identity, work, projects, about, certifications } from './content.mjs?v=20260930-profile1';
+import { identity, work, projects, about, certifications } from './content.mjs?v=20261003-skyloom1';
 
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const external = (href, label, className = '') => `<a class="${className}" href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(label)}<span aria-hidden="true"> ↗</span></a>`;
@@ -43,7 +43,8 @@ function panel(title, back, eyebrow, contents, className = '') {
 
 function detail(item, kind) {
   const isWork = kind === 'work';
-  const body = `<div class="detail-content"><p class="detail-kicker">${escapeHTML(item.category)}</p><h2>${escapeHTML(item.title)}<span class="period">.</span></h2>${isWork ? `<div class="detail-meta"><span>${escapeHTML(item.role)}</span><span>${escapeHTML(item.period)}</span></div>` : ''}<p class="detail-lead">${escapeHTML(item.summary)}</p>${item.metric ? `<div class="metric"><strong>${escapeHTML(item.metric)}</strong><span>${escapeHTML(item.metricLabel)}</span></div>` : ''}<div class="detail-prose">${item.paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</div>${item.external ? `<div class="detail-action">${external(item.external.href, item.external.label)}</div>` : ''}<div class="tag-list" aria-label="Tools and topics">${item.tags.map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div></div>`;
+  const actions = [item.external, item.source].filter(Boolean);
+  const body = `<div class="detail-content"><p class="detail-kicker">${escapeHTML(item.category)}</p><h2>${escapeHTML(item.title)}<span class="period">.</span></h2>${isWork ? `<div class="detail-meta"><span>${escapeHTML(item.role)}</span><span>${escapeHTML(item.period)}</span></div>` : ''}<p class="detail-lead">${escapeHTML(item.summary)}</p>${item.metric ? `<div class="metric"><strong>${escapeHTML(item.metric)}</strong><span>${escapeHTML(item.metricLabel)}</span></div>` : ''}<div class="detail-prose">${item.paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</div>${actions.length ? `<div class="detail-action">${actions.map(action => external(action.href, action.label)).join('')}</div>` : ''}<div class="tag-list" aria-label="Tools and topics">${item.tags.map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div></div>`;
   return panel(item.title, isWork ? '/' : '/projects/', isWork ? 'SELECTED WORK' : 'PROJECT NOTE', body, isWork ? 'work-panel' : 'project-panel');
 }
 

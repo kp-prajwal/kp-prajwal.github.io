@@ -1,5 +1,5 @@
-import { identity } from './content.mjs?v=20260930-profile1';
-import { renderPanels, routeFor } from './render.mjs?v=20260930-profile1';
+import { identity } from './content.mjs?v=20261003-skyloom1';
+import { renderPanels, routeFor } from './render.mjs?v=20261003-skyloom1';
 
 const viewport = document.querySelector('#viewport');
 const rail = document.querySelector('#rail');

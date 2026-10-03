@@ -55,6 +55,20 @@ export const work = [
 
 export const projects = [
   {
+    slug: 'skyloom', title: 'Skyloom', category: 'Generative systems / data product',
+    teaser: 'Weather becomes a new city portrait every day.',
+    summary: 'An autonomous daily system that turns live weather and city context into evolving generative art.',
+    paragraphs: [
+      'Skyloom selects an unused city, reads its current and hourly weather, and retrieves a sourced briefing, landmark, notable person, and local fact. An open-weight model proposes the creative direction, then deterministic code breeds and measures four visual candidates before publishing the strongest one.',
+      'The artwork is data-driven rather than decorative. Temperature, cloud cover, precipitation, wind, daylight, and local context shape its palette, motion, density, light, and marks. Each result can be reconstructed in the browser from a compact JSON recipe instead of storing a rendered image.',
+      'I designed the system to run unattended and stay inexpensive. GitHub Actions schedules the daily loop, GitHub Pages hosts the archive, and bounded model calls run through Cloudflare Workers AI. Weather and inference failures fall back to deterministic local behavior, while idempotent runs prevent duplicate cities and unnecessary API calls.',
+    ],
+    metric: '64K+', metricLabel: 'cities in the deterministic catalog',
+    tags: ['Python', 'GitHub Actions', 'Workers AI', 'Generative art', 'Open-Meteo', 'Deterministic systems'],
+    external: { label: 'View today’s portrait', href: 'https://kp-prajwal.github.io/skyloom/' },
+    source: { label: 'Explore the code', href: 'https://github.com/kp-prajwal/skyloom' },
+  },
+  {
     slug: 'cometverse', title: 'CometVerse', category: 'Conversational AI',
     teaser: 'A voice-enabled campus assistant for UT Dallas.',
     summary: 'A campus assistant built to make university information easier to find through conversation.',
